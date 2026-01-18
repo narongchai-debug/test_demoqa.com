@@ -1,0 +1,11 @@
+BASE_URL = "https://demoqa.com"
+API_BASE_URL = "https://demoqa.com"
+
+VALID_USERNAME = "qa2025"
+WRONG_USERNAME = "wronguser"
+
+VALID_PASSWORD = "@TestQA2025"
+WRONG_PASSWORD = "123456"
+
+VALID_ISBN = "9781593277574"
+NEW_ISBN = "9781449325862"

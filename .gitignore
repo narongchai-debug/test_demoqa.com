@@ -1,0 +1,34 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Pytest / Test artifacts
+.pytest_cache/
+allure-results/
+allure-report/
+
+# Selenium / Browser
+chromedriver*
+geckodriver*
+msedgedriver*
+*.log
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Env / Secrets
+.env
+.env.*
+secrets.*
+config.local.*
