@@ -1,2 +1,5 @@
 selenium
 pytest
+requests
+allure-pytest
+pytest-rerunfailures
