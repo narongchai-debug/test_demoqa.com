@@ -1,11 +1,11 @@
-import pytest
-import uuid
+import pytest, uuid, os
 from config.settings import BASE_URL, API_BASE_URL
 
-from api.clients.account_client import AccountClient
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from pages.login_page import LoginPage
-from pages.profile_page import ProfilePage
+from api.clients.account_client import AccountClient
+
 
 @pytest.fixture(scope="session")
 def base_url():
@@ -17,11 +17,18 @@ def api_base_url():
 
 @pytest.fixture(scope="function")
 def driver():
-    driver = webdriver.Chrome()
-    driver.maximize_window()
+    options = Options()
 
-    yield driver 
-    #after tested
+    if os.getenv("CI"):  # GitHub Actions จะมี CI=true
+        options.add_argument("--headless=new")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--window-size=1920,1080")
+    else:
+        options.add_argument("--start-maximized")
+
+    driver = webdriver.Chrome(options=options)
+    yield driver
     driver.quit()
 
 @pytest.fixture(scope="function")

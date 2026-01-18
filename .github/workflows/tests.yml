@@ -1,0 +1,96 @@
+name: UI & API Tests (pytest)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  api-tests:
+    name: API Tests
+    runs-on: ubuntu-latest
+    env:
+      BASE_URL: https://demoqa.com
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run API tests
+        run: |
+          pytest -q tests/api --alluredir=allure-results-api
+
+      - name: Upload Allure results (API)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-api
+          path: allure-results-api
+
+      - name: Upload test artifacts (API)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts-api
+          path: |
+            artifacts
+            logs
+          if-no-files-found: ignore
+
+  ui-tests:
+    name: UI Tests
+    runs-on: ubuntu-latest
+    env:
+      BASE_URL: https://demoqa.com
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Set up Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Run UI tests
+        run: |
+          pytest -q tests/ui --alluredir=allure-results-ui
+
+      - name: Upload Allure results (UI)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-ui
+          path: allure-results-ui
+
+      - name: Upload test artifacts (UI)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts-ui
+          path: |
+            artifacts
+            screenshots
+            logs
+          if-no-files-found: ignore
