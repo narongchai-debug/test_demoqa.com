@@ -23,9 +23,6 @@ def driver():
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--window-size=1920,1080")
-    
-    # เพิ่ม options อื่นๆ ที่ต้องการ
-    # options.add_argument("--start-maximized")
 
     driver = webdriver.Chrome(options=options)
     driver.maximize_window()

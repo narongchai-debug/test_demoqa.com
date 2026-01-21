@@ -39,22 +39,14 @@ jobs:
           name: allure-results-api
           path: allure-results-api
 
-      - name: Upload test artifacts (API)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-artifacts-api
-          path: |
-            artifacts
-            logs
-          if-no-files-found: ignore
 
   ui-tests:
     name: UI Tests
     runs-on: ubuntu-latest
     env:
       BASE_URL: https://demoqa.com
-
+      CI: true
+      
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -83,14 +75,3 @@ jobs:
         with:
           name: allure-results-ui
           path: allure-results-ui
-
-      - name: Upload test artifacts (UI)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-artifacts-ui
-          path: |
-            artifacts
-            screenshots
-            logs
-          if-no-files-found: ignore
