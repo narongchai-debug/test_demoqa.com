@@ -45,7 +45,6 @@ class ProfilePage:
             EC.presence_of_element_located((By.ID, "closeSmallModal-ok"))
         )
         self.driver.execute_script("arguments[0].click();", ok_btn)
-
         # จัดการ Alert ทันทีหลังจากกด OK ใน Modal
         alert = WebDriverWait(self.driver, timeout).until(EC.alert_is_present())
         alert.accept()
