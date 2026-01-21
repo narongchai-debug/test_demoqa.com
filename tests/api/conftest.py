@@ -14,6 +14,7 @@ def fixed_user():
     assert res.status_code == 201, f"Create user failed: {res.text}"
     user_id = res.json()["userID"]
 
+    time.sleep(2)
     res = account_api.generate_token(username, password)
     assert res.status_code == 200, f"Generate Token failed: {res.text}"
     token = res.json()["token"]
@@ -31,7 +32,7 @@ def random_user():
     password = "@Test12345"
     account_api = AccountClient()
 
-    time.sleep(3)
+    time.sleep(5)
     #Create new user
     res = account_api.create_user(username, password)
     assert res.status_code == 201, f"Create Failed: {res.text}"

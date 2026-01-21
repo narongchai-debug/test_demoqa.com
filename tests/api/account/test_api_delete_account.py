@@ -1,5 +1,5 @@
 from clients.account_client import AccountClient
-import allure, uuid
+import allure, time
 
 def assert_common_response_structure(body):
     with allure.step("Verify response body"):

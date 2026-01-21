@@ -1,7 +1,7 @@
 from pages.profile_page import ProfilePage
 from pages.login_page import LoginPage
 from config.settings import VALID_ISBN
-import allure
+import allure, time
 
 @allure.feature("UI")
 @allure.story("UI Delete book")
@@ -27,5 +27,6 @@ def test_delete_book(random_user, driver):
 
     profile_page.delete_book(title_book)
     profile_page.assert_book_deleted(title_book)
-
+    time.sleep(2)
+    profile_page.logout()
 

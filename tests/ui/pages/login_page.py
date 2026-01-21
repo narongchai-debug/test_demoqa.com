@@ -4,10 +4,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from config.settings import BASE_URL
 
 class LoginPage:
-    expectedUrl = "/profile"
+    expectedUrl = "profile"
     username_field = (By.ID, "userName")
     password_field = (By.ID, "password")
-    login_button = (By.ID, "login")
+    loginBtn = (By.ID, "login")
 
     def __init__(self, driver):
         self.driver = driver
@@ -24,14 +24,14 @@ class LoginPage:
     def login(self, username: set, password: str):
         self.enteredUsername(username)
         self.enteredPassword(password)
-        WebDriverWait(self.driver, 15).until(EC.element_to_be_clickable(self.login_button)).click()
+        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.loginBtn)).click()
         WebDriverWait(self.driver, 15).until(EC.url_contains(self.expectedUrl))
         assert self.expectedUrl in self.driver.current_url
 
     def login_invalid_username(self, username: str, password: str):
         self.enteredUsername(username)
         self.enteredPassword(password)
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.login_button)).click()
+        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.loginBtn)).click()
 
         error_msg = WebDriverWait(self.driver , 10).until(
             EC.visibility_of_element_located((By.XPATH, '//*[@id="name"]'))

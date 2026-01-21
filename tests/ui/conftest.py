@@ -3,7 +3,7 @@ from config.settings import BASE_URL, API_BASE_URL
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from pages.login_page import LoginPage
+from pages.profile_page import ProfilePage
 from api.clients.account_client import AccountClient
 
 
@@ -18,33 +18,21 @@ def api_base_url():
 @pytest.fixture(scope="function")
 def driver():
     options = Options()
-
     if os.getenv("CI"):  # GitHub Actions จะมี CI=true
         options.add_argument("--headless=new")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--window-size=1920,1080")
-    else:
-        options.add_argument("--start-maximized")
+    
+    # เพิ่ม options อื่นๆ ที่ต้องการ
+    # options.add_argument("--start-maximized")
 
     driver = webdriver.Chrome(options=options)
+    driver.maximize_window()
+    driver.implicitly_wait(10)
+
     yield driver
     driver.quit()
-
-@pytest.fixture(scope="function")
-def logged_in_driver(driver, random_user):
-    login_page = LoginPage(driver)
-    login_page.open_page()
-
-    username = random_user["userName"]
-    password = random_user["password"]
-    uid = random_user["userId"]
-    token = random_user["token"]
-    login_page.login(username, password)
-    return {
-        "userId": uid,
-        "token": token
-    }
 
 @pytest.fixture(scope="function")
 def random_user():
