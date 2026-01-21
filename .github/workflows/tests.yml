@@ -3,8 +3,6 @@ name: UI & API Tests (pytest)
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
   api-tests:
@@ -45,8 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BASE_URL: https://demoqa.com
-      CI: true
-      
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
