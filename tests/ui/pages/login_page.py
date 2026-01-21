@@ -12,8 +12,17 @@ class LoginPage:
     def __init__(self, driver):
         self.driver = driver
 
-    def open_page(self):
-        self.driver.get(BASE_URL + "/login")
+    def open_page(self, retries=3):
+        import time
+        for i in range(retries):
+            try:
+                self.driver.get(BASE_URL + "/login")
+                # เช็คว่า Element สำคัญขึ้นมาหรือยัง (เช่น loginBtn)
+                WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located(self.loginBtn))
+                return
+            except Exception as e:
+                if i == retries - 1: raise e
+                time.sleep(2)
 
     def enteredUsername(self, username: str):
         WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.username_field)).send_keys(username)
@@ -24,14 +33,21 @@ class LoginPage:
     def login(self, username: set, password: str):
         self.enteredUsername(username)
         self.enteredPassword(password)
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.loginBtn)).click()
+        
+        login_btn = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(self.loginBtn))
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", login_btn)
+        self.driver.execute_script("arguments[0].click();", login_btn)
+
         WebDriverWait(self.driver, 15).until(EC.url_contains(self.expectedUrl))
         assert self.expectedUrl in self.driver.current_url
 
     def login_invalid_username(self, username: str, password: str):
         self.enteredUsername(username)
         self.enteredPassword(password)
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.loginBtn)).click()
+        
+        login_btn = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(self.loginBtn))
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", login_btn)
+        self.driver.execute_script("arguments[0].click();", login_btn)
 
         error_msg = WebDriverWait(self.driver , 10).until(
             EC.visibility_of_element_located((By.XPATH, '//*[@id="name"]'))
