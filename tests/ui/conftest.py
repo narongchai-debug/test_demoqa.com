@@ -17,6 +17,7 @@ def api_base_url():
 
 @pytest.fixture(scope="function")
 def driver():
+    options = Options()
     if os.getenv("CI"):  # GitHub Actions จะมี CI=true
         options.add_argument("--headless=new")
         options.add_argument("--no-sandbox")

@@ -63,8 +63,10 @@ jobs:
         uses: browser-actions/setup-chrome@v1
 
       - name: Run UI tests
+        env:
+          CI: true
         run: |
-          pytest -q tests/ui --alluredir=allure-results-ui
+          pytest -v tests/ui --alluredir=allure-results-ui
 
       - name: Upload Allure results (UI)
         if: always()
