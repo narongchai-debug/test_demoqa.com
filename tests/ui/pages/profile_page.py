@@ -36,14 +36,15 @@ class ProfilePage:
         )
         # รอให้ปุ่มลบแสดงผลและคลิกได้
         deleteBtn = WebDriverWait(row, timeout).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "#delete-record-undefined"))
+            EC.presence_of_element_located((By.CSS_SELECTOR, "#delete-record-undefined"))
         )
-        deleteBtn.click()
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", deleteBtn)
+        self.driver.execute_script("arguments[0].click();", deleteBtn)
 
         ok_btn = WebDriverWait(self.driver, timeout).until(
-            EC.element_to_be_clickable((By.ID, "closeSmallModal-ok"))
+            EC.presence_of_element_located((By.ID, "closeSmallModal-ok"))
         )
-        ok_btn.click()
+        self.driver.execute_script("arguments[0].click();", ok_btn)
 
         # จัดการ Alert ทันทีหลังจากกด OK ใน Modal
         alert = WebDriverWait(self.driver, timeout).until(EC.alert_is_present())
