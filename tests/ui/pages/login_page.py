@@ -12,17 +12,8 @@ class LoginPage:
     def __init__(self, driver):
         self.driver = driver
 
-    def open_page(self, retries=3):
-        import time
-        for i in range(retries):
-            try:
-                self.driver.get(BASE_URL + "/login")
-                # เช็คว่า Element สำคัญขึ้นมาหรือยัง (เช่น loginBtn)
-                WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located(self.loginBtn))
-                return
-            except Exception as e:
-                if i == retries - 1: raise e
-                time.sleep(2)
+    def open_page(self):
+        self.driver.get(BASE_URL + "/login")
 
     def enteredUsername(self, username: str):
         WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.username_field)).send_keys(username)
