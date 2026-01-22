@@ -25,7 +25,7 @@ class LoginPage:
         self.enteredUsername(username)
         self.enteredPassword(password)
         
-        login_btn = WebDriverWait(self.driver, 15).until(EC.presence_of_element_located(self.loginBtn))
+        login_btn = WebDriverWait(self.driver, 15).until(EC.element_to_be_clickable(self.loginBtn))
         self.driver.execute_script("arguments[0].scrollIntoView(true);", login_btn)
         self.driver.execute_script("arguments[0].click();", login_btn)
 
@@ -36,7 +36,7 @@ class LoginPage:
         self.enteredUsername(username)
         self.enteredPassword(password)
         
-        login_btn = WebDriverWait(self.driver, 15).until(EC.presence_of_element_located(self.loginBtn))
+        login_btn = WebDriverWait(self.driver, 15).until(EC.element_to_be_clickable(self.loginBtn))
         self.driver.execute_script("arguments[0].scrollIntoView(true);", login_btn)
         self.driver.execute_script("arguments[0].click();", login_btn)
 
