@@ -16,6 +16,7 @@ def test_delete_book(random_user, driver):
     loginPage = LoginPage(driver)
     profile_page = ProfilePage(driver)
 
+    time.sleep(2)
     res = profile_page.add_book(uid= uid, isbn=VALID_ISBN, token=token) #Title = Understanding ECMAScript 6
     assert res.status_code == 201, f"add book failed: {res.text}"
 

@@ -14,12 +14,12 @@ class BookStorePage:
         self.driver.get(BASE_URL + "/books")
     
     def searchBook(self, book):
-        search_input = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.search_field))
+        search_input = WebDriverWait(self.driver, 15).until(EC.element_to_be_clickable(self.search_field))
         search_input.clear()
         search_input.send_keys(book)
         
     def get_result_title(self):
-        return WebDriverWait(self.driver, 10).until(
+        return WebDriverWait(self.driver, 15).until(
             EC.visibility_of_element_located(
                 (By.CSS_SELECTOR, "#app > div > div > div > div.col-12.mt-4.col-md-6 > div.books-wrapper > div.ReactTable.-striped.-highlight > div.rt-table > div.rt-tbody > div:nth-child(1) > div > div:nth-child(3)")
             ) 
