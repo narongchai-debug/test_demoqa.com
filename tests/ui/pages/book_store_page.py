@@ -10,11 +10,31 @@ class BookStorePage:
     def __init__(self, driver):
         self.driver = driver
 
-    def open_page(self):
-        self.driver.get(BASE_URL + "/books")
+    def _remove_ads(self):
+        script = """
+        var ads = document.querySelectorAll('#fixedban, footer, [id^="google_ads"]');
+        for (var i = 0; i < ads.length; i++) {
+            ads[i].style.display = 'none';
+        }
+        """
+        self.driver.execute_script(script)
+
+    def open_page(self, retries=3):
+        for i in range(retries):
+            try:
+                self.driver.get(BASE_URL + "/books")
+                WebDriverWait(self.driver, 10).until(
+                    EC.presence_of_element_located(self.search_field)
+                )
+                self._remove_ads()
+                return
+            except Exception:
+                if i == retries - 1: raise
+                self.driver.refresh()
     
     def searchBook(self, book):
         search_input = WebDriverWait(self.driver, 15).until(EC.element_to_be_clickable(self.search_field))
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", search_input)
         search_input.clear()
         search_input.send_keys(book)
         

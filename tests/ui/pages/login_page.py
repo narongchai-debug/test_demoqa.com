@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 from config.settings import BASE_URL
 
 class LoginPage:
@@ -12,8 +13,28 @@ class LoginPage:
     def __init__(self, driver):
         self.driver = driver
 
-    def open_page(self):
-        self.driver.get(BASE_URL + "/login")
+    def _remove_ads(self):
+        """Remove ads that frequently block elements on demoqa.com"""
+        script = """
+        var ads = document.querySelectorAll('#fixedban, footer, [id^="google_ads"]');
+        for (var i = 0; i < ads.length; i++) {
+            ads[i].style.display = 'none';
+        }
+        """
+        self.driver.execute_script(script)
+
+    def open_page(self, retries=3):
+        for i in range(retries):
+            try:
+                self.driver.get(BASE_URL + "/login")
+                WebDriverWait(self.driver, 10).until(
+                    EC.presence_of_element_located(self.username_field)
+                )
+                self._remove_ads()
+                return
+            except Exception:
+                if i == retries - 1: raise
+                self.driver.refresh()
 
     def enteredUsername(self, username: str):
         usernameInput = WebDriverWait(self.driver, 15).until(EC.element_to_be_clickable(self.username_field))

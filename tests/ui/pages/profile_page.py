@@ -24,8 +24,28 @@ class ProfilePage:
         self.session.mount("https://", adapter)
         self.session.mount("http://", adapter)
 
-    def open_page(self):
-        self.driver.get(BASE_URL + "/profile")
+    def _remove_ads(self):
+        script = """
+        var ads = document.querySelectorAll('#fixedban, footer, [id^="google_ads"]');
+        for (var i = 0; i < ads.length; i++) {
+            ads[i].style.display = 'none';
+        }
+        """
+        self.driver.execute_script(script)
+
+    def open_page(self, retries=3):
+        for i in range(retries):
+            try:
+                self.driver.get(BASE_URL + "/profile")
+                self._remove_ads()
+                # Wait for something that indicates the profile page is loaded
+                WebDriverWait(self.driver, 10).until(
+                    EC.presence_of_element_located(self.logout_button)
+                )
+                return
+            except Exception:
+                if i == retries - 1: raise
+                self.driver.refresh()
 
     def add_book(self, uid: str, isbn: str, token: str):
         payload = {
@@ -49,12 +69,13 @@ class ProfilePage:
         deleteBtn = WebDriverWait(row, timeout).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "#delete-record-undefined"))
         )
-        self.driver.execute_script("arguments[0].scrollIntoView(true);", deleteBtn)
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", deleteBtn)
         self.driver.execute_script("arguments[0].click();", deleteBtn)
 
         ok_btn = WebDriverWait(self.driver, timeout).until(
             EC.presence_of_element_located((By.ID, "closeSmallModal-ok"))
         )
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", ok_btn)
         self.driver.execute_script("arguments[0].click();", ok_btn)
         # จัดการ Alert ทันทีหลังจากกด OK ใน Modal
         alert = WebDriverWait(self.driver, timeout).until(EC.alert_is_present())
