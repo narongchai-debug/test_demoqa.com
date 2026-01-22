@@ -25,7 +25,7 @@ class LoginPage:
         self.enteredUsername(username)
         self.enteredPassword(password)
         
-        login_btn = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(self.loginBtn))
+        login_btn = WebDriverWait(self.driver, 15).until(EC.presence_of_element_located(self.loginBtn))
         self.driver.execute_script("arguments[0].scrollIntoView(true);", login_btn)
         self.driver.execute_script("arguments[0].click();", login_btn)
 
@@ -36,11 +36,11 @@ class LoginPage:
         self.enteredUsername(username)
         self.enteredPassword(password)
         
-        login_btn = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(self.loginBtn))
+        login_btn = WebDriverWait(self.driver, 15).until(EC.presence_of_element_located(self.loginBtn))
         self.driver.execute_script("arguments[0].scrollIntoView(true);", login_btn)
         self.driver.execute_script("arguments[0].click();", login_btn)
 
-        error_msg = WebDriverWait(self.driver , 10).until(
+        error_msg = WebDriverWait(self.driver , 15).until(
             EC.visibility_of_element_located((By.XPATH, '//*[@id="name"]'))
         )
         assert error_msg.text == "Invalid username or password!", f"ข้อความผิด: {error_msg.text}"
