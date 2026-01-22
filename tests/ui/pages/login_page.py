@@ -16,12 +16,18 @@ class LoginPage:
         self.driver.get(BASE_URL + "/login")
 
     def enteredUsername(self, username: str):
-        WebDriverWait(self.driver, 15).until(EC.element_to_be_clickable(self.username_field)).send_keys(username)
+        usernameInput = WebDriverWait(self.driver, 15).until(EC.element_to_be_clickable(self.username_field))
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", usernameInput)
+        usernameInput.clear()
+        usernameInput.send_keys(username)
     
     def enteredPassword(self, password: str):
-        WebDriverWait(self.driver, 15).until(EC.element_to_be_clickable(self.password_field)).send_keys(password)
+        passwordInput = WebDriverWait(self.driver, 15).until(EC.element_to_be_clickable(self.password_field))
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", passwordInput)
+        passwordInput.clear()
+        passwordInput.send_keys(password)
 
-    def login(self, username: set, password: str):
+    def login(self, username: str, password: str):
         self.enteredUsername(username)
         self.enteredPassword(password)
         

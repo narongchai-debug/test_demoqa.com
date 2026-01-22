@@ -12,6 +12,17 @@ class ProfilePage:
     
     def __init__(self, driver):
         self.driver = driver
+        self.session = requests.Session()
+
+        retry_strategy = Retry(
+            total=3,
+            backoff_factor=2,
+            status_forcelist= 502,
+            allowed_methods= "POST"
+        )
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        self.session.mount("https://", adapter)
+        self.session.mount("http://", adapter)
 
     def open_page(self):
         self.driver.get(BASE_URL + "/profile")
