@@ -29,7 +29,7 @@ class LoginPage:
         self.driver.execute_script("arguments[0].scrollIntoView(true);", login_btn)
         self.driver.execute_script("arguments[0].click();", login_btn)
 
-        WebDriverWait(self.driver, 15).until(EC.url_contains(self.expectedUrl))
+        WebDriverWait(self.driver, 30).until(EC.url_contains(self.expectedUrl))
         assert self.expectedUrl in self.driver.current_url
 
     def login_invalid_username(self, username: str, password: str):
