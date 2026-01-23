@@ -62,26 +62,36 @@ class ProfilePage:
         }
         return requests.post(BASE_URL + "/BookStore/v1/Books", headers=headers, json=payload)
 
-    def delete_book(self, book_title: str,timeout: int = 15):
-        #หาRow ของหนังสือที่ต้องการลบ
+    def delete_book(self, book_title: str, timeout: int = 20):
+        self._remove_ads()
+        # หา Row ของหนังสือที่ต้องการลบ
         row = WebDriverWait(self.driver, timeout).until(
             EC.presence_of_element_located((By.XPATH, f"//div[contains(@class,'rt-tbody')]//div[contains(@class,'rt-tr-group')][.//a[normalize-space()='{book_title}']]"))
         )
         # รอให้ปุ่มลบแสดงผลและคลิกได้
         deleteBtn = WebDriverWait(row, timeout).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "#delete-record-undefined"))
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "#delete-record-undefined"))
         )
         self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", deleteBtn)
         self.driver.execute_script("arguments[0].click();", deleteBtn)
 
-        ok_btn = WebDriverWait(self.driver, timeout).until(
-            EC.presence_of_element_located((By.ID, "closeSmallModal-ok"))
-        )
-        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", ok_btn)
-        self.driver.execute_script("arguments[0].click();", ok_btn)
-        # จัดการ Alert ทันทีหลังจากกด OK ใน Modal
-        alert = WebDriverWait(self.driver, timeout).until(EC.alert_is_present())
-        alert.accept()
+        # จัดการ Modal และ Alert พร้อม Retry หากไม่พบ Alert (มักเกิดใน CI)
+        for i in range(3):
+            try:
+                ok_btn = WebDriverWait(self.driver, timeout).until(
+                    EC.element_to_be_clickable((By.ID, "closeSmallModal-ok"))
+                )
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", ok_btn)
+                self.driver.execute_script("arguments[0].click();", ok_btn)
+
+                # รอ Alert
+                alert = WebDriverWait(self.driver, timeout).until(EC.alert_is_present())
+                alert.accept()
+                break  # สำเร็จแล้วออกจาก Loop
+            except TimeoutException:
+                if i == 2:  # ครั้งสุดท้ายแล้วยังไม่ได้
+                    raise TimeoutException(f"Failed to delete book '{book_title}' due to missing alert after clicking OK button in modal.")
+                time.sleep(1)
 
         # รอให้ Modal หายไป
         WebDriverWait(self.driver, timeout).until(
