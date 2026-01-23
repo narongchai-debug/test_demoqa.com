@@ -3,6 +3,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from urllib3.util.retry import Retry
+from requests.adapters import HTTPAdapter
 
 from config.settings import BASE_URL
 import requests, time
