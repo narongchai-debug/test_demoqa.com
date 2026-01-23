@@ -80,9 +80,7 @@ class ProfilePage:
             try:
                 ok_btn = WebDriverWait(self.driver, timeout).until(
                     EC.element_to_be_clickable((By.ID, "closeSmallModal-ok"))
-                )
-                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", ok_btn)
-                self.driver.execute_script("arguments[0].click();", ok_btn)
+                ).click()
 
                 # รอ Alert
                 alert = WebDriverWait(self.driver, timeout).until(EC.alert_is_present())
