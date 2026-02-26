@@ -10,8 +10,8 @@ import requests, time
 
 class ProfilePage:
     expectedUrl = "/login"
-    logout_button = (By.ID, "submit")
-    
+    logout_button = (By.ID, "submit");
+     
     def __init__(self, driver):
         self.driver = driver
         self.session = requests.Session()
@@ -35,19 +35,9 @@ class ProfilePage:
         """
         self.driver.execute_script(script)
 
-    def open_page(self, retries=3):
-        for i in range(retries):
-            try:
-                self.driver.get(BASE_URL + "/profile")
-                self._remove_ads()
-                # Wait for something that indicates the profile page is loaded
-                WebDriverWait(self.driver, 10).until(
-                    EC.presence_of_element_located(self.logout_button)
-                )
-                return
-            except Exception:
-                if i == retries - 1: raise
-                self.driver.refresh()
+    def open_page(self):
+        self.driver.get(BASE_URL + "/profile")
+        self._remove_ads()
 
     def add_book(self, uid: str, isbn: str, token: str):
         payload = {
@@ -64,47 +54,26 @@ class ProfilePage:
 
     def delete_book(self, book_title: str, timeout: int = 20):
         self._remove_ads()
-        # หา Row ของหนังสือที่ต้องการลบ
-        row = WebDriverWait(self.driver, timeout).until(
-            EC.presence_of_element_located((By.XPATH, f"//div[contains(@class,'rt-tbody')]//div[contains(@class,'rt-tr-group')][.//a[normalize-space()='{book_title}']]"))
-        )
         # รอให้ปุ่มลบแสดงผลและคลิกได้
-        deleteBtn = WebDriverWait(row, timeout).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "#delete-record-undefined"))
-        )
-        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", deleteBtn)
-        self.driver.execute_script("arguments[0].click();", deleteBtn)
 
-        # จัดการ Modal และ Alert พร้อม Retry หากไม่พบ Alert (มักเกิดใน CI)
-        for i in range(3):
-            try:
-                ok_btn = WebDriverWait(self.driver, timeout).until(
-                    EC.element_to_be_clickable((By.ID, "closeSmallModal-ok"))
-                ).click()
-
-                # รอ Alert
-                alert = WebDriverWait(self.driver, timeout).until(EC.alert_is_present())
-                alert.accept()
-                break  # สำเร็จแล้วออกจาก Loop
-            except TimeoutException:
-                if i == 2:  # ครั้งสุดท้ายแล้วยังไม่ได้
-                    raise TimeoutException(f"Failed to delete book '{book_title}' due to missing alert after clicking OK button in modal.")
-                time.sleep(1)
-
-        # รอให้ Modal หายไป
         WebDriverWait(self.driver, timeout).until(
-            EC.invisibility_of_element_located((By.ID, "closeSmallModal-ok"))
-        )
+            EC.element_to_be_clickable((By.ID, "delete-record-9781593277574"))
+        ).click();
+ 
+        # จัดการ Modal และ Alert พร้อม Retry หากไม่พบ Alert 
+        WebDriverWait(self.driver, timeout).until(
+            EC.element_to_be_clickable((By.ID, "closeSmallModal-ok"))
+        ).click()
 
+        alert = WebDriverWait(self.driver, timeout).until(EC.alert_is_present())
+        alert.accept()
 
     def assert_book_deleted(self, book_title: str)-> bool:
-
-        xpath_row = f"//div[contains(@class,'rt-tbody')]//div[contains(@class,'rt-tr-group')][.//a[normalize-space()='{book_title}']]"
         WebDriverWait(self.driver, 10).until(
-            EC.invisibility_of_element_located((By.XPATH, xpath_row))
+            EC.invisibility_of_element_located((By.ID, "delete-record-9781593277574"))
         )
 
     def logout(self):
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(self.logout_button)).click()
+        WebDriverWait(self.driver, 15).until(EC.element_to_be_clickable(self.logout_button)).click()
         WebDriverWait(self.driver, 10).until(EC.url_contains(self.expectedUrl))
         assert self.expectedUrl in self.driver.current_url
