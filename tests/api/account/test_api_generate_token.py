@@ -25,7 +25,6 @@ def assert_invalid_response(body):
 @allure.story("Generate Token")
 @allure.title("gen token success")
 def test_generate_token_success():
-    time.sleep(4)
     with allure.step("Send request to Generate token"):
         res = account_api.generate_token(VALID_USERNAME, VALID_PASSWORD)
     with allure.step("Verify response status"):
